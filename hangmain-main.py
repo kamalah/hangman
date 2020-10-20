@@ -22,6 +22,7 @@ def get_word(lang,diff):
     
     """
     pick_word = ""
+    used_words= []
     
     if (lang not in ["EN","ES"]) or (diff not in [1,2,3]):
         return pick_word
