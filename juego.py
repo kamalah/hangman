@@ -4,7 +4,7 @@ import pandas as pd
 
 def display_hangman(tries):
     stages = [  # final state: cat lose the fish
-                """
+               """
     /\\_,/\
    / _  _ |      ,--.
   (   T   )  ,-' ,-'
@@ -17,7 +17,7 @@ def display_hangman(tries):
 
                 """,
                 # get closer
-        """
+                """
                |\__/|
               (_ ^_^ )  
          _     )    (                           ____   
@@ -159,12 +159,14 @@ def play_hangman():
         game_difficulty = int(input("Enter game difficulty between and 1 (easy) and 3 (hard): "))
         game_language = input("Enter EN for english or ES for Spanish: ")
         game_word = get_word(game_language, game_difficulty)
-        used_word_list.append(game_word)
-    print(game_word)
+        
+    
+
     print(display_hangman(number_of_tries))
     unsolved_letters = len(game_word)
     #get input (Avatar)
     #main game play
+    
     #while loop to take input and check if game is over
     while (number_of_tries > 0) and (unsolved_letters > 0):
         print(get_word_status(game_word,played_letters))
@@ -181,4 +183,12 @@ def play_hangman():
             print(display_hangman(number_of_tries))     
     # end main while loop
     
-    return game_word #temporary return
+    print(game_word)
+    return used_word_list.append(game_word)
+   
+  #Didn´t know how to make work this last loop without mess the used_word_list 
+
+    #while input("Play Again? (Y/N) ").upper() == "Y":
+     #   game_word == ""
+      #  play_hangman()
+         
