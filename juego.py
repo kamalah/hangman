@@ -112,8 +112,8 @@ def get_word(lang,diff):
             pick_word = word_row.iloc[0]['Word']
                 
         
-        #return pick_word
-        return "canción"
+        return pick_word
+        #return "cínción"
 
 def remove_accent(ltr):
     return unicodedata.normalize("NFKD",ltr).encode("ASCII","ignore").decode("ascii")
@@ -180,27 +180,39 @@ def play_hangman():
         
         played_letters.append(new_letter)
         #update game status    
-        print(f'{game_word} {new_letter}')
         if check_letter(game_word, new_letter):
-            #print(count_letters(game_word, new_letter))
             display_word = get_word_status(game_word,played_letters)
             unsolved_letters = display_word.count("*")
-            print(display_hangman(number_of_tries))
         else:
             number_of_tries -= 1
-            print(display_hangman(number_of_tries))     
-        print(unsolved_letters)
-    # end main while loop
+        
+        print(display_hangman(number_of_tries))     
+        print(" ".join(played_letters))
+        # end main while loop
     
     print(game_word)
-    return game_word
+    result = "You Won!" if number_of_tries > 0 else "You Lost!!!!"
+    print(result)
+    return [game_word, result]
    
 def multi_gameplay():
     used_word_list = list()
-    game_word = play_hangman()
-    used_word_list.append(game_word)
+    streak = [0,0]
+    hangman_results = play_hangman()
+    used_word_list.append(hangman_results[0])
+    game_result = hangman_results[1]
+    if game_result == "You Won!":
+        streak[0] += 1
+    else:
+        streak[1] += 1
     while input("Play Again? (Y/N) ").upper() == "Y":
-        game_word = play_hangman()
-        used_word_list.append(game_word)   
+        hangman_results = play_hangman()
+        game_word = hangman_results[0]
+        game_result = hangman_results[1]
+        used_word_list.append(game_word)
+        if game_result == "You Won!":
+            streak[0] += 1
+        else:
+            streak[1] += 1
     print(used_word_list)
-    
+    print(f"Wins: {streak[0]} | Losses: {streak[1]} ")
