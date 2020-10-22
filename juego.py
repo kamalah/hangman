@@ -1,5 +1,8 @@
 import pandas as pd
+import unicodedata
 
+used_word_list = list() #initialize as global variable
+ 
 def display_hangman(tries):
     stages = [  # final state: cat lose the fish
                """
@@ -96,11 +99,11 @@ def get_word(lang,diff):
     """
     pick_word = ""
     
-    if (lang not in ["EN","ES"]) or (diff not in [1,2,3]):
+    if (lang not in ["EN","ES"]) or (diff not in ["1","2","3"]):
         return pick_word
     else:
         full_word_list = pd.read_csv('word_list.csv')
-        word_list = full_word_list[(full_word_list.Category == diff) & (full_word_list.Language==lang) ]
+        word_list = full_word_list[(full_word_list.Category == int(diff)) & (full_word_list.Language==lang) ]
         word_row = word_list.sample()
         pick_word = word_row.iloc[0]['Word']
         while pick_word in used_word_list:
@@ -109,8 +112,11 @@ def get_word(lang,diff):
             pick_word = word_row.iloc[0]['Word']
                 
         
-        return pick_word
+        #return pick_word
+        return "canción"
 
+def remove_accent(ltr):
+    return unicodedata.normalize("NFKD",ltr).encode("ASCII","ignore").decode("ascii")
 
 def get_player_letter(letters):
     """
@@ -135,8 +141,11 @@ def get_player_letter(letters):
 def get_word_status(word,letter_list):
    
    word_array = list(word)
-   current_word_status = [i if i in letter_list else "*" for i in word_array  ]
+   current_word_status = [i if (i in letter_list) or (remove_accent(i) in letter_list)  else "*" for i in word_array  ]
    return ("".join(current_word_status))
+
+def check_letter(word,letter):
+    return any([letter == remove_accent(i) or i == letter for i in word ])
 
 def play_hangman():
     """
@@ -152,12 +161,10 @@ def play_hangman():
     
     #get inputs (Language, Difficulty)
     while (game_word == ""):
-        game_difficulty = int(input("Enter game difficulty between and 1 (easy) and 3 (hard): "))
+        game_difficulty = input("Enter game difficulty between and 1 (easy) and 3 (hard): ")
         game_language = input("Enter EN for english or ES for Spanish: ")
         game_word = get_word(game_language, game_difficulty)
         
-    
-
     print(display_hangman(number_of_tries))
     unsolved_letters = len(game_word)
     #get input (Avatar)
@@ -165,27 +172,35 @@ def play_hangman():
     
     #while loop to take input and check if game is over
     while (number_of_tries > 0) and (unsolved_letters > 0):
-        print(get_word_status(game_word,played_letters))
+        display_word = get_word_status(game_word,played_letters)
+        print(display_word)
         #show current game status
         new_letter = get_player_letter(played_letters) # get player input
+        print(new_letter)
+        
         played_letters.append(new_letter)
         #update game status    
-        
-        if new_letter in game_word:
-            unsolved_letters -= game_word.count(new_letter)
+        print(f'{game_word} {new_letter}')
+        if check_letter(game_word, new_letter):
+            #print(count_letters(game_word, new_letter))
+            display_word = get_word_status(game_word,played_letters)
+            unsolved_letters = display_word.count("*")
             print(display_hangman(number_of_tries))
         else:
             number_of_tries -= 1
             print(display_hangman(number_of_tries))     
+        print(unsolved_letters)
     # end main while loop
     
     print(game_word)
     return game_word
    
 def multi_gameplay():
- 	used_word_list = list()
+    used_word_list = list()
     game_word = play_hangman()
-	used_word_list.append(game_word)
-	while input("Play Again? (Y/N) ").upper() == "Y":
-		game_word = play_hangman()
-		used_word_list.append(game_word)   
+    used_word_list.append(game_word)
+    while input("Play Again? (Y/N) ").upper() == "Y":
+        game_word = play_hangman()
+        used_word_list.append(game_word)   
+    print(used_word_list)
+    
