@@ -1,7 +1,5 @@
 import pandas as pd
 
-
-
 def display_hangman(tries):
     stages = [  # final state: cat lose the fish
                """
@@ -82,8 +80,6 @@ def display_hangman(tries):
                 """
     ]
     return stages[tries]
-
-used_word_list = list()
 
 def get_word(lang,diff):
     """
@@ -184,11 +180,12 @@ def play_hangman():
     # end main while loop
     
     print(game_word)
-    return used_word_list.append(game_word)
+    return game_word
    
-  #Didn´t know how to make work this last loop without mess the used_word_list 
-
-    #while input("Play Again? (Y/N) ").upper() == "Y":
-     #   game_word == ""
-      #  play_hangman()
-         
+def multi_gameplay():
+ 	used_word_list = list()
+    game_word = play_hangman()
+	used_word_list.append(game_word)
+	while input("Play Again? (Y/N) ").upper() == "Y":
+		game_word = play_hangman()
+		used_word_list.append(game_word)   
